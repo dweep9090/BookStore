@@ -9,14 +9,10 @@ import paymentRoutes from "./src/routes/payment.route";
 import reviewRoutes from "./src/routes/review.route";
 import adminRoutes from "./src/routes/admin.route";
 import cors from "cors";
-import {
-  generateBookSummary,
-} from "./src/services/gemini.service";
-import { prisma } from "./src/lib/prisma";
 import helmet from "helmet";
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 app.use(helmet({
   contentSecurityPolicy:false
@@ -30,48 +26,6 @@ app.use(
 );
 
 app.use(express.json());
-
-app.get("/test-db", async (req, res) => {
-  try {
-    const users = await prisma.user.findMany();
-
-    res.json({
-      success: true,
-      count: users.length,
-    });
-  } catch (error: any) {
-    console.error("FULL ERROR:", error);
-
-    res.status(500).json({
-      success: false,
-      message: error?.message,
-      stack: error?.stack,
-    });
-  }
-});
-
-app.get("/test-ai", async (req, res) => {
-  try {
-    const summary =
-      await generateBookSummary(
-        "Clean Code",
-        "Robert C Martin",
-        "A handbook of agile software craftsmanship"
-      );
-
-    res.json({
-      success: true,
-      summary,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      error,
-    });
-  }
-});
 
 
 app.use("/api/auth", authRoutes);
