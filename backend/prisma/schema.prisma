@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String
+  passwordHash  String
+  role          Role           @default(BUYER)
+  createdAt     DateTime       @default(now())
+  cartItems     CartItem[]
+  orders        Order[]
+  refreshTokens RefreshToken[]
+  reviews       Review[]
+  wishlist      Wishlist[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Book {
+  id               String      @id @default(uuid())
+  isbn             String      @unique
+  title            String
+  author           String
+  description      String?
+  aiDescription    String?
+  coverUrl         String?
+  price            Float
+  stock            Int         @default(0)
+  category         String
+  genre            String?
+  averageRating    Float       @default(0)
+  reviewCount      Int         @default(0)
+  aiSummary        String?
+  summaryUpdatedAt DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  reviews          Review[]
+  stockLogs        StockLog[]
+  wishlist         Wishlist[]
+}
+
+model Order {
+  id                String      @id @default(uuid())
+  userId            String
+  status            OrderStatus @default(PENDING)
+  totalAmount       Float
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  createdAt         DateTime    @default(now())
+  user              User        @relation(fields: [userId], references: [id])
+  items             OrderItem[]
+}
+
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  bookId   String
+  quantity Int
+  price    Float
+  book     Book   @relation(fields: [bookId], references: [id])
+  order    Order  @relation(fields: [orderId], references: [id])
+}
+
+model CartItem {
+  id       String @id @default(uuid())
+  userId   String
+  bookId   String
+  quantity Int    @default(1)
+  book     Book   @relation(fields: [bookId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, bookId])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  rating    Int
+  content   String?
+  createdAt DateTime @default(now())
+  book      Book     @relation(fields: [bookId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, bookId])
+}
+
+model Wishlist {
+  id     String @id @default(uuid())
+  userId String
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, bookId])
+}
+
+model StockLog {
+  id        String   @id @default(uuid())
+  bookId    String
+  delta     Int
+  reason    String
+  createdAt DateTime @default(now())
+  book      Book     @relation(fields: [bookId], references: [id])
+}
+
+enum Role {
+  BUYER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  FAILED
+}

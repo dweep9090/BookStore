@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+/* ---------- Light Theme ---------- */
+
+:root {
+  --color-bg: #fdfbf7;
+  --color-surface: #ffffff;
+  --color-text: #1a1a1a;
+  --color-accent: #2563eb;
+  --color-border: #e5e7eb;
+
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+/* ---------- Dark Theme ---------- */
+
+.dark {
+  --color-bg: #111827;
+  --color-surface: #1f2937;
+  --color-text: #f9fafb;
+  --color-accent: #3b82f6;
+  --color-border: #374151;
+}
+
+/* ---------- Global Styles ---------- */
+
+* {
+  transition:
+    background-color 0.3s ease,
+    color 0.2s ease,
+    border-color 0.3s ease;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* ---------- Typography ---------- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.serif {
+  font-family: var(--font-serif);
+}
+
+/* ---------- Reusable Elements ---------- */
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.text-primary {
+  color: var(--color-text);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
