@@ -11,7 +11,8 @@ import {
   updateBook,
   deleteBook,
   generateSummary,
-  getRecommendations
+  getRecommendations,
+  getGenres
 } from "../controllers/books.controller";
 
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -20,6 +21,11 @@ import { requireRole } from "../middlewares/role.middleware";
 const router = Router();
 
 router.get("/", getBooks);
+
+router.get(
+  "/genres",
+  getGenres
+);
 
 router.get("/:id", getBookById);
 
@@ -56,6 +62,7 @@ router.get(
   getRecommendations
 );
 
+
+
 export default router;
 
-// books/070458aa-46fd-4b7c-889f-0d863fcfb889/recommendations

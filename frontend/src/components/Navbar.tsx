@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Select from "react-select";
 
 import {
   Search,
@@ -26,6 +27,7 @@ export default function Navbar() {
     setSearch,
     selectedGenre,
     setSelectedGenre,
+    genres,
   } = useSearch();
 
   const [mobileOpen, setMobileOpen] =
@@ -37,10 +39,6 @@ export default function Navbar() {
         "dark"
     );
 
-  const genres = [
-    "ALL",
-    "Software Engineering",
-  ];
 
   const toggleTheme = () => {
     const newTheme = !darkMode;
@@ -121,18 +119,16 @@ export default function Navbar() {
           BookStore
         </Link>
 
-        {/* Search */}
+        {/* Search + Genre */}
 
-        <div className="hidden flex-1 md:flex">
-          <div className="relative mx-auto w-full max-w-xl">
+        <div className="hidden flex-1 items-center gap-4 md:flex">
+          <div className="relative flex-1">
             <input
               type="text"
               placeholder="Search books..."
               value={search}
               onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
+                setSearch(e.target.value)
               }
               className="
                 w-full
@@ -158,6 +154,88 @@ export default function Navbar() {
                 -translate-y-1/2
                 text-gray-500
               "
+            />
+          </div>
+
+          <div className="min-w-[220px] max-w-[260px]">
+            <Select
+              options={genres.map((genre) => ({
+                value: genre,
+                label: genre,
+              }))}
+              value={{
+                value: selectedGenre,
+                label: selectedGenre,
+              }}
+              onChange={(option) =>
+                option &&
+                setSelectedGenre(option.value)
+              }
+              isSearchable
+              placeholder="All Genres"
+              className="text-sm"
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: "42px",
+                  borderRadius: "10px",
+                  borderColor: "#d1d5db",
+                  backgroundColor: "var(--color-surface)",
+                  color: "var(--color-text)",
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "var(--color-accent)",
+                  },
+                }),
+
+                menu: (base) => ({
+                  ...base,
+                  borderRadius: "10px",
+                  backgroundColor: "var(--color-surface)",
+                  overflow: "hidden",
+                  zIndex: 9999,
+                }),
+
+                menuList: (base) => ({
+                  ...base,
+                  backgroundColor: "var(--color-surface)",
+                }),
+
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? "var(--color-accent)"
+                    : "var(--color-surface)",
+                  color: state.isFocused
+                    ? "#fff"
+                    : "var(--color-text)",
+                  cursor: "pointer",
+                }),
+
+                singleValue: (base) => ({
+                  ...base,
+                  color: "var(--color-text)",
+                }),
+
+                input: (base) => ({
+                  ...base,
+                  color: "var(--color-text)",
+                }),
+
+                placeholder: (base) => ({
+                  ...base,
+                  color: "#6b7280",
+                }),
+
+                dropdownIndicator: (base) => ({
+                  ...base,
+                  color: "#6b7280",
+                }),
+
+                indicatorSeparator: () => ({
+                  display: "none",
+                }),
+              }}
             />
           </div>
         </div>
@@ -325,51 +403,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Genre Navigation */}
-
-      <nav
-        className="
-          hidden
-          border-t
-          border-gray-200
-          md:block
-          dark:border-gray-700
-        "
-      >
-        <div
-          className="
-            mx-auto
-            flex
-            max-w-7xl
-            gap-8
-            px-4
-            py-3
-            text-sm
-          "
-        >
-          {genres.map((genre) => (
-            <button
-              key={genre}
-              onClick={() =>
-                setSelectedGenre(
-                  genre
-                )
-              }
-              className={`
-                transition
-                hover:text-[var(--color-accent)]
-                ${
-                  selectedGenre === genre
-                    ? "font-semibold text-[var(--color-accent)]"
-                    : ""
-                }
-              `}
-            >
-              {genre}
-            </button>
-          ))}
-        </div>
-      </nav>
+      
 
       {/* Mobile Menu */}
 
@@ -418,28 +452,40 @@ export default function Navbar() {
                   Admin Panel
                 </Link>
             )}
-            {genres.map((genre) => (
-              <button
-                key={genre}
-                onClick={() => {
-                  setSelectedGenre(
-                    genre
-                  );
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Genre
+              </label>
 
-                  setMobileOpen(
-                    false
+              <select
+                value={selectedGenre}
+                onChange={(e) => {
+                  setSelectedGenre(
+                    e.target.value
                   );
                 }}
-                className={`text-left ${
-                  selectedGenre ===
-                  genre
-                    ? "font-semibold text-[var(--color-accent)]"
-                    : ""
-                }`}
+                className="
+                  w-full
+                  rounded-lg
+                  border
+                  border-gray-300
+                  bg-white
+                  px-4
+                  py-2
+                  dark:border-gray-700
+                  dark:bg-gray-800
+                "
               >
-                {genre}
-              </button>
-            ))}
+                {genres.map((genre) => (
+                  <option
+                    key={genre}
+                    value={genre}
+                  >
+                    {genre}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}

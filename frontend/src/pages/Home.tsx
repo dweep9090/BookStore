@@ -7,6 +7,7 @@ import type { Book } from "../types/book";
 
 import { useSearch } from "../context/SearchContext";
 
+
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,9 +25,10 @@ export default function Home() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const data = await getBooks();
+        const booksData =
+        await getBooks();
 
-        setBooks(data);
+      setBooks(booksData);
       } catch (error) {
         console.error(error);
       } finally {

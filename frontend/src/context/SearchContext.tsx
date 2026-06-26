@@ -2,7 +2,12 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect
 } from "react";
+
+import {
+  getGenres,
+} from "../services/book.service";
 
 import type { ReactNode } from "react";
 
@@ -15,6 +20,11 @@ interface SearchContextType {
   selectedGenre: string;
   setSelectedGenre: (
     value: string
+  ) => void;
+
+  genres: string[];
+  setGenres: (
+    genres: string[]
   ) => void;
 }
 
@@ -36,6 +46,26 @@ export function SearchProvider({
     setSelectedGenre,
   ] = useState("ALL");
 
+  const [genres, setGenres] =
+    useState<string[]>(["ALL"]);
+
+
+    useEffect(() => {
+    const loadGenres =
+      async () => {
+        try {
+          const data =
+            await getGenres();
+
+          setGenres(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+    loadGenres();
+  }, []);
+
   return (
     <SearchContext.Provider
       value={{
@@ -43,6 +73,8 @@ export function SearchProvider({
         setSearch,
         selectedGenre,
         setSelectedGenre,
+        genres,
+        setGenres,
       }}
     >
       {children}

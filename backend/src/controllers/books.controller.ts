@@ -522,3 +522,64 @@ export const getRecommendations = async (
     });
   }
 };
+
+
+export const getGenres = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const cacheKey = "genres";
+
+    const cachedGenres =
+      await redis.get<string[]>(cacheKey);
+
+    if (cachedGenres) {
+      res.status(200).json({
+        success: true,
+        genres: cachedGenres,
+        source: "cache",
+      });
+      return;
+    }
+
+    const books =
+      await prisma.book.findMany({
+        distinct: ["genre"],
+        select: {
+          genre: true,
+        },
+        orderBy: {
+          genre: "asc",
+        },
+      });
+
+    const genres = [
+      "ALL",
+      ...books
+        .map((book) => book.genre)
+        .filter(Boolean),
+    ];
+
+    await redis.set(
+      cacheKey,
+      genres,
+      {
+        ex: 3600,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      genres,
+      source: "database",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch genres",
+    });
+  }
+};

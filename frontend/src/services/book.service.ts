@@ -73,3 +73,18 @@ export const getRecommendations =
 
     return data.recommendations;
   };
+
+interface GenresResponse {
+  success: boolean;
+  genres: string[];
+}
+
+export const getGenres =
+  async (): Promise<string[]> => {
+    const response =
+      await api.get<GenresResponse>(
+        "/books/genres"
+      );
+
+    return response.data.genres;
+  };
