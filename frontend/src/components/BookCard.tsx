@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import type { Book } from "../types/book";
 
 interface BookCardProps {
@@ -8,6 +9,15 @@ interface BookCardProps {
 export default function BookCard({
   book,
 }: BookCardProps) {
+  const [imageError, setImageError] =
+    useState(false);
+
+  const imageUrl =
+    book.coverUrl ||
+    (book.isbn
+      ? `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`
+      : "");
+
   return (
     <Link
       to={`/books/${book.id}`}
@@ -29,23 +39,50 @@ export default function BookCard({
       <div
         className="
           aspect-[3/4]
-          flex
-          items-center
-          justify-center
+          overflow-hidden
           bg-gray-100
           dark:bg-gray-800
         "
       >
-        {book.coverUrl ? (
+        {!imageError && imageUrl ? (
           <img
-            src={book.coverUrl}
+            src={imageUrl}
             alt={book.title}
             className="h-full w-full object-cover"
+            onError={() =>
+              setImageError(true)
+            }
           />
         ) : (
-          <span className="text-gray-400">
-            No Cover
-          </span>
+          <div
+            className="
+              flex
+              h-full
+              w-full
+              flex-col
+              items-center
+              justify-center
+              bg-gray-200
+              dark:bg-gray-700
+            "
+          >
+            <span className="text-6xl">
+              📚
+            </span>
+
+            <p
+              className="
+                mt-4
+                text-sm
+                font-bold
+                tracking-[0.25em]
+                text-gray-600
+                dark:text-gray-300
+              "
+            >
+              NO COVER
+            </p>
+          </div>
         )}
       </div>
 
